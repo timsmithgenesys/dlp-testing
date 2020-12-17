@@ -1,0 +1,7 @@
+# Content created by the makefile
+.logs
+settings.xml
+
+# Cloned repos
+platform-client-sdk-common
+swagger-codegen
