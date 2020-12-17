@@ -3,9 +3,9 @@ commands:
 
 fullservice:
 	@start=$$(date +%s); \
-	make clean clone configure build-swagger-codegen build-javasdk && \
+	make clean clone configure build-react build-swagger-codegen build-javasdk && \
 	seconds=$$(($$(date +%s)-start)); \
-	echo "\nFull service total: $$((seconds/60)):$$(printf "%02d" $$((seconds%60)))"
+	echo "\nFull-service total: $$((seconds/60)):$$(printf "%02d" $$((seconds%60)))"
 
 clean:
 	@echo "\nCleaning..." && \
@@ -16,6 +16,9 @@ clean:
 	d=$$(date +%s); \
 	rm -rf swagger-codegen && \
 	echo "swagger-codegen            | $$(($$(date +%s)-d))s" && \
+	d=$$(date +%s); \
+	rm -rf react-app-example && \
+	echo "react-app-example          | $$(($$(date +%s)-d))s" && \
 	d=$$(date +%s); \
 	rm -rf .logs && \
 	echo ".logs                      | $$(($$(date +%s)-d))s" && \
@@ -32,6 +35,9 @@ clone:
 	d=$$(date +%s); \
 	git clone https://github.com/purecloudlabs/swagger-codegen.git &> .logs/clone-swagger-codegen.txt && \
 	echo "swagger-codegen            | $$(($$(date +%s)-d))s" && \
+	d=$$(date +%s); \
+	git clone https://github.com/timsmithgenesys/react-app-example.git &> .logs/clone-react-app-example.txt && \
+	echo "react-app-example          | $$(($$(date +%s)-d))s" && \
 	seconds=$$(($$(date +%s)-start)); \
 	echo "Clone total: $$((seconds/60)):$$(printf "%02d" $$((seconds%60)))"
 
@@ -70,3 +76,20 @@ build-javasdk-impl:
 	@cd platform-client-sdk-common && \
 	npm i && \
 	node sdkBuilder --sdk purecloudjava
+
+build-react:
+	@start=$$(date +%s); \
+	echo "\nInitializing NVM..." && \
+	source ${NVM_DIR}/nvm.sh && \
+	nvm list &> .logs/nvm.txt && \
+	echo "Building React app..." && \
+	cd react-app-example && \
+	nvm use && \
+	d=$$(date +%s); \
+	yarn install &> ../.logs/build-react-yarn-build.txt && \
+	echo "yarn install               | $$(($$(date +%s)-d))s" && \
+	d=$$(date +%s); \
+	yarn build &> ../.logs/build-react-yarn-build.txt && \
+	echo "yarn build                 | $$(($$(date +%s)-d))s" && \
+	seconds=$$(($$(date +%s)-start)); \
+	echo "React total: $$((seconds/60)):$$(printf "%02d" $$((seconds%60)))"
